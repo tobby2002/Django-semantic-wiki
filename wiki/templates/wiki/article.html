@@ -1,8 +1,6 @@
 {%extends "wiki/main.html"%}
 
 {%block article%}
-{%for section in sections%}
-<h3>{{section.header}}</h3>
-<p>{{section.content}}</p>
-{%endfor%}
+<h1>{{name}}</h1>
+<p>{{text}}</p>
 {%endblock%}
