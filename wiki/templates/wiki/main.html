@@ -5,9 +5,12 @@
     <title>
       {{title}}
     </title>
+    {%block styles%}
+    {% load staticfiles %}
+    <link rel="stylesheet" href="{% static "wiki/css/main.css" %}" media="screen" title="no title" charset="utf-8">
+    {%endblock%}
   </head>
   <body>
-    {%block navbar%}{%endblock%}
-    {%block article%}{%endblock%}
+    {%block body%}{%endblock%}
   </body>
 </html>

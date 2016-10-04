@@ -1,6 +1,9 @@
 {%extends "wiki/main.html"%}
 
+{%block body%}
+{%block navbar%}{%endblock%}
 {%block article%}
 <h1>{{name}}</h1>
-<p>{{text}}</p>
+<p>{{text|safe}}</p>
+{%endblock%}
 {%endblock%}
