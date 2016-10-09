@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.http import Http404
 from wiki.models import Page
 from wikimarkup import parse
 import re
@@ -28,7 +29,10 @@ def addlinks(text):
 
 # Create your views here.
 def article(request, page_name):
-    page = Page.objects.get(name=page_name)
+    try:
+        page = Page.objects.get(name=page_name)
+    except Page.DoesNotExist as e:
+        raise Http404("No such page exists")
     text = addlinks(parse(page.text))
     context = {
     'name' : page.name,
