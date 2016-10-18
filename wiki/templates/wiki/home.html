@@ -2,10 +2,39 @@
 
 {%block styles%}
   {{block.super}}
-
+  {% load staticfiles %}
+  <link rel="stylesheet" href="{% static "wiki/css/jquery-ui.min.css" %}" media="screen" title="no title" charset="utf-8">
+  <script src="{% static "wiki/js/jquery-3.1.1.min.js" %}" charset="utf-8"></script>
+  <script src="{% static "wiki/js/jquery-ui.min.js" %}" charset="utf-8"></script>
 {%endblock%}
 
 {%block body%}
-<input type="text" name="name" value="">
-<button type="submit" name="button">Search</button>
+<input type="text" name="name" id="query" value="" placeholder="Enter your query here">
+<button type="button" id="search">Search</button>
+{%endblock%}
+
+{%block scripts%}
+<script type="text/javascript">
+  $("#query").autocomplete({
+    source: function( request, response ) {
+        $.ajax({
+            dataType: "json",
+            type : 'Get',
+            url: 's/',
+            data: {'q':$("#query").val()},
+            success: function(data) {
+              console.log(data);
+              response(data['results']);
+            },
+            error: function(data) {
+                $('input.suggest-user').removeClass('ui-autocomplete-loading');
+            }
+        });
+    }
+  });
+  $("#search").click(function(){
+    console.log(window.location);
+    window.location.href = window.location + "wiki/" + $("#query").val().replace(" ","_");
+  });
+</script>
 {%endblock%}
