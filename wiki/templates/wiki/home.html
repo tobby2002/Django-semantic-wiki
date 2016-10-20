@@ -30,11 +30,14 @@
                 $('input.suggest-user').removeClass('ui-autocomplete-loading');
             }
         });
-    }
+    },
+    select: function(event, ui){
+      window.location.href = window.location + "wiki/" + String(ui.item.value).replace(" ","_");
+    },
   });
   $("#search").click(function(){
     console.log(window.location);
-    window.location.href = window.location + "wiki/" + $("#query").val().replace(" ","_");
+    window.location.href = window.location + "results/?q=" + $("#query").val()
   });
 </script>
 {%endblock%}

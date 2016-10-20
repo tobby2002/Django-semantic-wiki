@@ -21,5 +21,6 @@ urlpatterns = [
     url(r'^$', views.home, name='home'),
     url(r'^admin/', admin.site.urls),
     url(r'^wiki/', include('wiki.urls')),
-    url(r'^s/', query.simple, name='simple')
+    url(r'^s/', query.simple, name='simple'),
+    url(r'^results/', query.results),
 ]
