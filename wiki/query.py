@@ -40,7 +40,7 @@ def results(request):
             sparql.setQuery(query)
             sparql.setReturnFormat(JSON)
             sparqlresults = sparql.query().convert()
-            suggestion = {'page':page,'linktext':page.name.replace("_"," ")}
+            suggestion = {'page':page.name,'linktext':page.name.replace("_"," ")}
             abstract = ""
             if sparqlresults["results"]["bindings"]:
                 abstract = sparqlresults["results"]["bindings"][0]["abstract"]["value"]
