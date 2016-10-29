@@ -1,0 +1,10 @@
+{%extends "wiki/main.html"%}
+{%block body%}
+{%for suggestion in suggestions%}
+<a href="/wiki/{{suggestion.page}}">{{suggestion.linktext}}</a>
+<p>
+  {{suggestion.abstract}}
+</p>
+<hr>
+{% endfor %}
+{%endblock%}
