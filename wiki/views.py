@@ -1,10 +1,12 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import Http404
-from wiki.models import Page, PageOutlinks
+from wiki.models import Page, PageOutlinks, PageRedirects
 from wikimarkup import parse
+import mwparserfromhell
+import string
 import re
 
-LINK_FROMAT = """<a href="{path}">{linktext}</a>"""
+LINK_FROMAT = u'<a href="{path}">{linktext}</a>'
 OUTLINK_TITLES = []
 
 _re_linktext = re.compile(r'\[\[([a-zA-Z0-9 ()-.]+)\]\]')
@@ -24,9 +26,15 @@ def processlink(m):
     path = "/wiki/" + matchtext
     return LINK_FROMAT.format(path = path,linktext = linktext)
 
-def processmedia(m):
-    """TODO: process the objects and fill up html to render media"""
-    return ""
+def processmedia(text):
+    mwcode = mwparserfromhell.parse(text)
+    templates = mwcode.filter_templates()
+    for template in templates:
+        try:
+            mwcode.remove(template)
+        except ValueError as e:
+            print "Unrenderable template"
+    return mwcode
 
 def getOutlinks(id):
     outlinks = PageOutlinks.objects.filter(id=id)
@@ -37,9 +45,10 @@ def addlinks(id,text):
     getOutlinks(id)
     text = _re_linktext.sub(processlink, text) # direct links
     text = _re_altlink.sub(processlink, text) # links with
-    text = _re_media.sub(processmedia, text) # for File Wikitory and other wikimedia
-    text = _re_annotate.sub(processmedia, text) # infobox and related info
+    # text = _re_media.sub(processmedia, text) # for File Wikitory and other wikimedia
+    # text = processmedia(text) # infobox and related info
     OUTLINK_TITLES = []
+
     return text
 
 # Create your views here.
@@ -47,10 +56,15 @@ def article(request, page_name):
     try:
         page = Page.objects.get(name=page_name)
     except Page.DoesNotExist as e:
-        raise Http404("No such page exists")
-    text = addlinks(page.id, parse(page.text))
+        if PageRedirects.objects.filter(redirects__exact=page_name).exists():
+            name = Page.objects.get(id=PageRedirects.objects.filter(redirects__exact=page_name)[0].id).name
+            return redirect('/wiki/'+name)
+        else:
+            raise Http404("No such page exists")
+    text = processmedia(page.text)
+    text = addlinks(page.id, parse(text))
     context = {
-    'name' : page.name,
+    'name' : page.name.replace("_"," "),
     'text' : text,
     }
     return render(request,'wiki/article.html',context)
