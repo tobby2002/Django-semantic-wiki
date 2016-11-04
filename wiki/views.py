@@ -1,6 +1,6 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import Http404
-from wiki.models import Page, PageOutlinks
+from wiki.models import Page, PageOutlinks, PageRedirects
 from wikimarkup import parse
 import mwparserfromhell
 import string
@@ -56,7 +56,11 @@ def article(request, page_name):
     try:
         page = Page.objects.get(name=page_name)
     except Page.DoesNotExist as e:
-        raise Http404("No such page exists")
+        if PageRedirects.objects.filter(redirects__exact=page_name).exists():
+            name = Page.objects.get(id=PageRedirects.objects.filter(redirects__exact=page_name)[0].id).name
+            return redirect('/wiki/'+name)
+        else:
+            raise Http404("No such page exists")
     text = processmedia(page.text)
     text = addlinks(page.id, parse(text))
     context = {
