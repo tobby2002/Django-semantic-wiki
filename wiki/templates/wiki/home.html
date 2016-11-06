@@ -5,11 +5,42 @@
   {% load staticfiles %}
   <link rel="stylesheet" href="{% static "wiki/css/jquery-ui.min.css" %}" media="screen" title="no title" charset="utf-8">
   <script src="{% static "wiki/js/jquery-ui.min.js" %}" charset="utf-8"></script>
+  <style media="screen">
+  html, body, .container-table {
+    height: 90%;
+  }
+  .container-table {
+    display: table;
+  }
+  .vertical-center-row {
+    display: table-cell;
+    vertical-align: middle;
+  }
+  </style>
+
+
+
 {%endblock%}
 
 {%block body%}
-<input type="text" name="name" id="query" value="" placeholder="Enter your query here">
-<button type="button" id="search">Search</button>
+<!-- <input type="text" name="name" id="query" value="" placeholder="Enter your query here"> -->
+<!-- <button type="button" class="btn btn-primary" id="search">Search</button> -->
+  {% load staticfiles %}
+<div class="container container-table">
+  <div class="row vertical-center-row">
+    <div class="col-lg-offset-3 col-md-offset-2 col-lg-6 col-md-8 col-sm-12">
+      <!-- <img src="{% static "wiki/img/logo.png" %}" alt="" align="middle"/> -->
+      <h4>Local</h4>
+      <h1>Wikipedia</h1>
+      <div class="input-group">
+        <input type="text" name="name" id="query" value="" class="form-control" placeholder="Search for...">
+        <span class="input-group-btn">
+          <button class="btn btn-default" id="search" type="button"><span class="glyphicon glyphicon-search"></span>Search</button>
+        </span>
+      </div><!-- /input-group -->
+    </div><!-- /.col-lg-6 -->
+  </div><!-- /.row -->
+</div><!-- container -->
 {%endblock%}
 
 {%block scripts%}

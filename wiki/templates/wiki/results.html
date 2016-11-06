@@ -11,6 +11,10 @@
 </style>
 {%endblock%}
 {%block body%}
+{% if semantic_result %}
+<h2>{{semantic_result.property}} : {{semantic_result.value}}</h2>
+{%endif%}
+<hr>
 {%for suggestion in suggestions%}
 <a href="/wiki/{{suggestion.page}}">{{suggestion.linktext}}</a>
 <p>

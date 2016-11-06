@@ -2,9 +2,19 @@ from django.shortcuts import render, redirect
 from django.http import Http404
 from wiki.models import Page, PageOutlinks, PageRedirects
 from wikimarkup import parse
+
 import mwparserfromhell
+import logging
 import string
 import re
+
+from wiki_project.settings import DEBUG
+if DEBUG:
+    logging.basicConfig(level=logging.DEBUG)
+else:
+    logging.basicConfig(filename="wiki.log", level=logging.DEBUG)
+
+logger = logging.getLogger(__name__)
 
 LINK_FROMAT = u'<a href="{path}">{linktext}</a>'
 OUTLINK_TITLES = []
@@ -29,11 +39,18 @@ def processlink(m):
 def processmedia(text):
     mwcode = mwparserfromhell.parse(text)
     templates = mwcode.filter_templates()
+    tags = mwcode.filter_tags()
     for template in templates:
         try:
             mwcode.remove(template)
         except ValueError as e:
-            print "Unrenderable template"
+            logger.warning("Unrenderable template")
+    for tag in tags:
+        if tag.__unicode__().startswith(u'<ref'):
+            try:
+                mwcode.remove(tag)
+            except ValueError as e:
+                logger.warning("Unrenderable template")
     return mwcode
 
 def getOutlinks(id):
@@ -41,11 +58,12 @@ def getOutlinks(id):
     for outLink in outlinks:
         OUTLINK_TITLES.append(Page.objects.get(id=outLink.outlinks).name)
 
+
 def addlinks(id,text):
     getOutlinks(id)
     text = _re_linktext.sub(processlink, text) # direct links
     text = _re_altlink.sub(processlink, text) # links with
-    # text = _re_media.sub(processmedia, text) # for File Wikitory and other wikimedia
+    text = _re_media.sub("", text) # for File Wikitory and other wikimedia
     # text = processmedia(text) # infobox and related info
     OUTLINK_TITLES = []
 
