@@ -1,0 +1,39 @@
+{%extends "wiki/main.html"%}
+
+{%block styles%}
+  {{block.super}}
+  {% load staticfiles %}
+
+  <link href="{% static "wiki/css/cover.css" %}" rel="stylesheet">
+  {%endblock%}
+{%block body%}
+
+<div class="site-wrapper">
+
+  <div class="site-wrapper-inner">
+
+    <div class="cover-container">
+
+      <div class="masthead clearfix">
+        <div class="inner">
+          <h3 class="masthead-brand"></h3>
+          <nav>
+            <ul class="nav masthead-nav">
+              <li><a href="/">Home</a></li>
+              <li><a href="/admin">Admin Site</a></li>
+              <li class="active"><a href="/about">About</a></li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+        <h3>Wikipedia</h3>
+        <p>
+          A local english wikipedia with synatactic and semantic search using the wordnet and dbpedia ontology. It makes use of nltk's NLP postagger have a better understanding of the query and autocorrects as well gives better related suggestions.
+        </p>
+        <p>
+          It has {{pages}} number of pages with {{categories}} number of categories
+        </p>
+      </div>
+    </div>
+  </div>
+      {%endblock%}

@@ -1,6 +1,7 @@
 {%extends "wiki/main.html"%}
 {%block styles%}
   {{block.super}}
+  {% load staticfiles %}
   <style media="screen">
   p {
   overflow: hidden;
@@ -8,18 +9,37 @@
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   }
+  body{
+    text-align: left;
+  }
 </style>
+<link href="{% static "wiki/css/cover.css" %}" rel="stylesheet">
 {%endblock%}
 {%block body%}
+<div class="cover-container">
+
+<div class="inner" style="margin-bottom:25px;padding-top:10px;padding-bottom:30px;">
+  <h3 class="masthead-brand"></h3>
+  <nav>
+    <ul class="nav masthead-nav">
+      <li class="active"><a href="/">Home</a></li>
+      <li><a href="/admin">Admin Site</a></li>
+      <li><a href="/about">About</a></li>
+    </ul>
+  </nav>
+</div>
+</div>
 {% if semantic_result %}
 <h2>{{semantic_result.property}} : {{semantic_result.value}}</h2>
 {%endif%}
-<hr>
+<!-- <hr> -->
 {%for suggestion in suggestions%}
-<a href="/wiki/{{suggestion.page}}">{{suggestion.linktext}}</a>
-<p>
+<a href="/wiki/{{suggestion.page}}"><p style="text-align:left;margin-left:20px">{{suggestion.linktext}}</p></a>
+<p style="margin-left:5px;margin-right:5px;margin-bottom:10px">
   {{suggestion.abstract}}
 </p>
+
+</div>
 <hr>
 {% endfor %}
 {%endblock%}

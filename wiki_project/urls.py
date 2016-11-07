@@ -23,4 +23,5 @@ urlpatterns = [
     url(r'^wiki/', include('wiki.urls')),
     url(r'^s/', query.simple, name='simple'),
     url(r'^results/', query.results, name='results'),
+    url(r'^about/',views.about)
 ]

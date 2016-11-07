@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import Http404
-from wiki.models import Page, PageOutlinks, PageRedirects
+from wiki.models import Page, PageOutlinks, PageRedirects, Metadata
 from wikimarkup import parse
 
 import mwparserfromhell
@@ -72,7 +72,7 @@ def addlinks(id,text):
 # Create your views here.
 def article(request, page_name):
     try:
-        page = Page.objects.get(name=page_name)
+        page = Page.objects.filter(name__exact=page_name)[0]
     except Page.DoesNotExist as e:
         if PageRedirects.objects.filter(redirects__exact=page_name).exists():
             name = Page.objects.get(id=PageRedirects.objects.filter(redirects__exact=page_name)[0].id).name
@@ -90,3 +90,11 @@ def article(request, page_name):
 def home(request):
     context = {'title':"Home"}
     return render(request,'wiki/home.html',context)
+
+def about(request):
+    metadata = Metadata.objects.get(id=1)
+    context = {
+    'pages' : metadata.nrofpages,
+    'categories' : metadata.nrofcategories
+    }
+    return render(request,'wiki/about.html',context)

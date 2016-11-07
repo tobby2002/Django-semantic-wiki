@@ -44,6 +44,13 @@ def autoCorrect(name):
     logger.debug("Auto corrected:" + name)
     return name
 
+# def ifExactAddToPages(pages,text,rank):
+#     if Page.objects.filter(name__exact=correct.capitalize()).exists():
+#         if not text.lower() in pages.keys():
+#             pages.update({text.lower():rank})
+#         else:
+#             pages[text.lower()] += rank
+
 def checkForSuggestion(pages,name):
 
     """ If the entered text is a page name then we go and render it """
@@ -58,6 +65,7 @@ def checkForSuggestion(pages,name):
                     pages.update({correct.lower():1})
                 else:
                     pages[correct.lower()] += 1
+                # ifExactAddToPages()
                 break
     else:
         pages.update({name:2})
@@ -237,6 +245,7 @@ def simple(request):
     logger.debug(pageresults)
     if pageresults:
         results = map(lambda x : x[0].replace("_"," ").capitalize(), pageresults)
+
     return JsonResponse({"results":results})
 
 def results(request):
@@ -248,6 +257,15 @@ def results(request):
         return HttpResponseRedirect('/wiki/'+name)
     else:
         results,raw_result = matchedpages(name)
+        final_result = {}
+        for result in results.keys():
+            if result.lower() != "of":
+                if result.capitalize() in final_result.keys():
+                    final_result[result.capitalize()] += results[result]
+                else:
+                    final_result.update({result.capitalize():results[result]})
+
+        results = final_result
         suggestions = []
         for page in results.keys():
             abstract = sparql.abstract_fetch(page.capitalize())
