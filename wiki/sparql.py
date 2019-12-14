@@ -27,7 +27,7 @@ def abstract_fetch(page):
     sparql = SPARQLWrapper("http://dbpedia.org/sparql")
     query = ABSTRACT % (page)
     abstract = ""
-    print query
+    print(query)
     sparql.setQuery(query)
     sparql.setReturnFormat(JSON)
     sparqlresults = sparql.query().convert()
@@ -39,22 +39,22 @@ def abstract_fetch(page):
 def prop_fetch(prop_name_partial, page_exact):
     sparql = SPARQLWrapper("http://dbpedia.org/sparql")
     query = ALL_PROPERTIES % (page_exact,page_exact)
-    print query
+    print(query)
     sparql.setQuery(query)
     sparql.setReturnFormat(JSON)
     sparqlresults = sparql.query().convert()
     preperties = []
     if sparqlresults["results"]["bindings"]:
-        # print sparqlresults['results']['bindings']
+        print(sparqlresults['results']['bindings'])
         for props in sparqlresults["results"]["bindings"]:
             if prop_name_partial.lower() in props['property']['value'].split('/')[-1].lower():
-                print (props['property']['value'])
+                print(props['property']['value'])
                 sub_query = GET_RELATION % (page_exact,props['property']['value'])
-                print sub_query
+                print(sub_query)
                 sparql.setQuery(sub_query)
                 sparql.setReturnFormat(JSON)
                 sub_sparqlresults = sparql.query().convert()
-                # print sub_sparqlresults['results']['bindings']
+                print(sub_sparqlresults['results']['bindings'])
                 if sub_sparqlresults["results"]["bindings"]:
                     for result in sub_sparqlresults["results"]["bindings"]:
                         if result['res']['type'] != 'uri':
@@ -66,25 +66,25 @@ def prop_fetch(prop_name_partial, page_exact):
 def test():
     sparql = SPARQLWrapper("http://dbpedia.org/sparql")
     query = ALL_PROPERTIES % ('Moon','Moon')
-    print query
+    print(query)
     sparql.setQuery(query)
     sparql.setReturnFormat(JSON)
     sparqlresults = sparql.query().convert()
     preperties = []
     if sparqlresults["results"]["bindings"]:
         for props in sparqlresults["results"]["bindings"]:
-            print props['property']['value']
+            print(props['property']['value'])
             sub_query = GET_RELATION % ('Moon',props['property']['value'])
             sparql.setQuery(sub_query)
             sparql.setReturnFormat(JSON)
             sub_sparqlresults = sparql.query().convert()
             if sub_sparqlresults["results"]["bindings"]:
                 for i in sub_sparqlresults["results"]["bindings"]:
-                    print i
+                    print(i)
 
 
     # query = ABSTRACT_SPARQL % (page.capitalize())
-    # print query
+    # print(query)
     # sparql.setQuery(query)
     # sparql.setReturnFormat(JSON)
     # sparqlresults = sparql.query().convert()
@@ -98,5 +98,5 @@ def test():
 
 if __name__ == '__main__':
     for prop in prop_fetch('leader','India'):
-        print prop
-    # test()
+        print(prop)
+    test()

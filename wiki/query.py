@@ -1,4 +1,4 @@
-from models import Page, Category
+from .models import Page, Category
 from django.http import JsonResponse, HttpResponseRedirect
 from django.shortcuts import redirect, render
 from SPARQLWrapper import SPARQLWrapper, JSON
@@ -6,7 +6,7 @@ from nltk.corpus import wordnet
 
 import re
 import nltk
-import sparql
+import wiki.sparql as sparql
 import logging
 import enchant
 
@@ -56,17 +56,18 @@ def checkForSuggestion(pages,name):
     """ If the entered text is a page name then we go and render it """
     if not Page.objects.filter(name__exact=name.capitalize()).exists():
         """ Dictionary suggests a few words very close to the words by looking at letter placement """
-        auto = d.suggest(name.lower().replace("_"," "))
-        if auto:
-            auto = map(lambda x:x.replace(" ","_"), auto)
-        for correct in auto:
-            if Page.objects.filter(name__exact=correct.capitalize()).exists():
-                if not correct.lower() in pages.keys():
-                    pages.update({correct.lower():1})
-                else:
-                    pages[correct.lower()] += 1
-                # ifExactAddToPages()
-                break
+        if name:
+            auto = d.suggest(name.lower().replace("_"," "))
+            if auto:
+                auto = map(lambda x:x.replace(" ","_"), auto)
+            for correct in auto:
+                if Page.objects.filter(name__exact=correct.capitalize()).exists():
+                    if not correct.lower() in pages.keys():
+                        pages.update({correct.lower():1})
+                    else:
+                        pages[correct.lower()] += 1
+                    # ifExactAddToPages()
+                    break
     else:
         pages.update({name:2})
 
@@ -146,14 +147,14 @@ def matchedpages(text):
     logger.debug('nouns:'+str(nouns))
 
     """ To get all the hypernyms and add to each noun """
-    print nouns
+    print(nouns)
     raw_result = None
     if len(nouns)>=2:
         if len(nouns) == 2:
             if Page.objects.filter(name__exact=nouns[0].capitalize()).exists():
                 part, page = nouns[1], nouns[0]
                 for prop in sparql.prop_fetch(part, page.capitalize()):
-                    print prop
+                    print(prop)
                     if prop['type'] == 'raw':
                         raw_result = prop
                         continue
@@ -166,7 +167,7 @@ def matchedpages(text):
             if Page.objects.filter(name__exact=nouns[1].capitalize()).exists():
                 part, page = nouns[0], nouns[1]
                 for prop in sparql.prop_fetch(part, page.capitalize()):
-                    print prop
+                    print(prop)
                     if prop['type'] == 'raw':
                         raw_result = prop
                         continue
@@ -183,12 +184,12 @@ def matchedpages(text):
                     hypernyms.update({hypernym:1})
                 else:
                     hypernyms[hypernym] += 1
-        print hypernyms
+        print(hypernyms)
         filtered_hypernyms = []
         for hypernym in hypernyms:
             if hypernyms[hypernym] > 1:
                 filtered_hypernyms.append(hypernym)
-        print filtered_hypernyms
+        print(filtered_hypernyms)
 
         page_found = False
         for hypernym in filtered_hypernyms:
@@ -238,10 +239,11 @@ def matchedpages(text):
 def simple(request):
     query = request.GET.get('q',"")
     name = query.strip().replace(" ","_").capitalize()
-    print name
+    print(name)
     pageresults, query = autoComplete(name)
     results = []
-    pageresults =  sorted(pageresults.iteritems(), key=lambda (k,v): (v,k))[::-1]
+    pageresults = sorted(pageresults.items(), key=lambda k,v: (v,k))[::-1]
+    print('pageresults:%s' % pageresults)
     logger.debug(pageresults)
     if pageresults:
         results = map(lambda x : x[0].replace("_"," ").capitalize(), pageresults)
@@ -251,7 +253,7 @@ def simple(request):
 def results(request):
     query = request.GET.get('q',"")
     name = query.strip().replace(" ","_").capitalize()
-    print name
+    print(name)
     if Page.objects.filter(name__exact=name).exists():
         logger.info("Page found:"+name)
         return HttpResponseRedirect('/wiki/'+name)

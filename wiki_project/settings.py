@@ -25,7 +25,7 @@ SECRET_KEY = '7l1!v_mwpns6x*d8tgp=$4_rjojfgs)kb7shqasgl!m&+0^oz&'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['10.50.36.199']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'wiki'
+    'wiki',
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -46,10 +46,12 @@ MIDDLEWARE_CLASSES = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
+    # 'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+MIDDLEWARE = MIDDLEWARE_CLASSES
 
 ROOT_URLCONF = 'wiki_project.urls'
 
@@ -75,16 +77,27 @@ WSGI_APPLICATION = 'wiki_project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
 
+TEST_RUNNER = "unittest.TextTestRunner"
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'wiki',
-        'USER': 'root',
-        # 'HOST': '/opt/lampp/var/mysql/mysql.sock',
-        'HOST': '127.0.0.1',
-        'PORT': 3306,
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'wiki',
+#         'USER': 'root',
+#         # 'HOST': '/opt/lampp/var/mysql/mysql.sock',
+#         'HOST': '127.0.0.1',
+#         'PORT': 3306,
+#     }
+# }
 
 
 # Password validation

@@ -5,8 +5,6 @@
 #   * Make sure each ForeignKey has `on_delete` set to the desired behavior.
 #   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
 # Feel free to rename the models, but don't rename db_table values or field names.
-from __future__ import unicode_literals
-
 from django.db import models
 
 
@@ -16,7 +14,7 @@ class Category(models.Model):
     name = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'Category'
 
 
@@ -32,7 +30,7 @@ class Metadata(models.Model):
     version = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'MetaData'
 
 
@@ -44,7 +42,7 @@ class Page(models.Model):
     isdisambiguation = models.TextField(db_column='isDisambiguation', blank=True, null=True)  # Field name made lowercase. This field type is a guess.
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'Page'
 
 
@@ -56,7 +54,7 @@ class Pagemapline(models.Model):
     lemma = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'PageMapLine'
 
 
@@ -65,7 +63,7 @@ class CategoryInlinks(models.Model):
     inlinks = models.IntegerField(db_column='inLinks', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'category_inlinks'
 
 
@@ -74,7 +72,7 @@ class CategoryOutlinks(models.Model):
     outlinks = models.IntegerField(db_column='outLinks', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'category_outlinks'
 
 
@@ -83,7 +81,7 @@ class CategoryPages(models.Model):
     pages = models.IntegerField(blank=True, null=True)
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'category_pages'
 
 
@@ -92,7 +90,7 @@ class PageCategories(models.Model):
     pages = models.IntegerField(blank=True, null=True)
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'page_categories'
 
 
@@ -101,7 +99,7 @@ class PageInlinks(models.Model):
     inlinks = models.IntegerField(db_column='inLinks', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'page_inlinks'
 
 
@@ -110,7 +108,7 @@ class PageOutlinks(models.Model):
     outlinks = models.IntegerField(db_column='outLinks', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'page_outlinks'
 
 
@@ -119,5 +117,5 @@ class PageRedirects(models.Model):
     redirects = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'page_redirects'

@@ -1,4 +1,6 @@
 *.py[cod]
 *$py.class
 *.log
+.idea
 local_settings.py
+/venv/

@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import Http404
 from wiki.models import Page, PageOutlinks, PageRedirects, Metadata
-from wikimarkup import parse
+from wikimarkup import parser
 
 import mwparserfromhell
 import logging
@@ -80,7 +80,7 @@ def article(request, page_name):
         else:
             raise Http404("No such page exists")
     text = processmedia(page.text)
-    text = addlinks(page.id, parse(text))
+    text = addlinks(page.id, parser(text))
     context = {
     'name' : page.name.replace("_"," "),
     'text' : text,
