@@ -1,0 +1,5 @@
+py-wikimarkup
+SPARQLWrapper
+mwparserfromhell
+pyenchant
+django==2.2.6
