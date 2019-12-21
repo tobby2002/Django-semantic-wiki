@@ -63,6 +63,47 @@ def prop_fetch(prop_name_partial, page_exact):
                             yield {'type':'resource','property':props['property']['value'].split('/')[-1],'value':result['res']['value'].split('/')[-1]}
 
 
+ALL_CLASSES = """
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+SELECT distinct ?subject ?predicate
+WHERE 
+{?subject ?predicate rdfs:Class}
+LIMIT 1000
+"""
+
+CLASS_PROPERTIES = """
+    SELECT ?property ?o
+    WHERE {
+        <%s> ?property ?o.
+}"""
+
+def _class_prop_fetch():
+    sparql = SPARQLWrapper("http://127.0.0.1:3030/neo/sparql")
+    query = ALL_CLASSES
+    class_list = []
+    print(query)
+    sparql.setQuery(query)
+    sparql.setReturnFormat(JSON)
+    sparqlresults = sparql.query().convert()
+    if sparqlresults["results"]["bindings"]:
+        print(sparqlresults["results"]["bindings"])
+        for cls in sparqlresults["results"]["bindings"]:
+            # s = aclass["subject"]["value"].split('/')[-1]
+            s = cls["subject"]["value"]
+            print(s)
+            # class_list.append(aklass)
+            sub_query = CLASS_PROPERTIES % (s)
+            sparql.setQuery(sub_query)
+            sparql.setReturnFormat(JSON)
+            sub_sparqlresults = sparql.query().convert()
+            if sub_sparqlresults["results"]["bindings"]:
+                for prop in sub_sparqlresults["results"]["bindings"]:
+                    p = prop["property"]["value"]
+                    o = prop["o"]["value"]
+                    class_list.append({'s':s, 'p':p, 'o':o})
+    return class_list
+
+
 def test():
     sparql = SPARQLWrapper("http://dbpedia.org/sparql")
     query = ALL_PROPERTIES % ('Moon','Moon')
@@ -98,8 +139,12 @@ def test():
 
 if __name__ == '__main__':
     # 1. only India leader
-    for prop in prop_fetch('leader','India'):
-        print(prop)
+    # for prop in prop_fetch('leader','India'):
+    #     print(prop)
 
     # 2. Moon - Moon all list
     # test()
+
+    # 3. localhost sparql endpoint
+    aURI = ''
+    _class_prop_fetch(aURI)
