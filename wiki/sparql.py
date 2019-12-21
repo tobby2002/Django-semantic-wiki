@@ -97,6 +97,9 @@ def test():
 
 
 if __name__ == '__main__':
+    # 1. only India leader
     for prop in prop_fetch('leader','India'):
         print(prop)
-    test()
+
+    # 2. Moon - Moon all list
+    # test()
