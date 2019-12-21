@@ -72,9 +72,10 @@ LIMIT 1000
 """
 
 CLASS_PROPERTIES = """
-    SELECT ?property ?o
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    SELECT ?o
     WHERE {
-        <%s> ?property ?o.
+        <%s> rdfs:label ?o.
 }"""
 
 def _class_prop_fetch():
@@ -98,10 +99,41 @@ def _class_prop_fetch():
             sub_sparqlresults = sparql.query().convert()
             if sub_sparqlresults["results"]["bindings"]:
                 for prop in sub_sparqlresults["results"]["bindings"]:
-                    p = prop["property"]["value"]
+                    # p = prop["property"]["value"]
                     o = prop["o"]["value"]
-                    class_list.append({'s':s, 'p':p, 'o':o})
+                    class_list.append({'s':s, 'o':o})
     return class_list
+
+
+
+CLASS_LABEL_COMMENT = """
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+SELECT distinct ?s ?label ?comment
+WHERE 
+{
+  ?s rdfs:label  ?label. 
+  ?s rdfs:comment  ?comment.
+}
+"""
+
+def _class_label_comment_fetch():
+    sparql = SPARQLWrapper("http://127.0.0.1:3030/neo/sparql")
+    query = CLASS_LABEL_COMMENT
+    rs_list = []
+    print(query)
+    sparql.setQuery(query)
+    sparql.setReturnFormat(JSON)
+    sparqlresults = sparql.query().convert()
+    if sparqlresults["results"]["bindings"]:
+        print(sparqlresults["results"]["bindings"])
+        for rs in sparqlresults["results"]["bindings"]:
+            # s = aclass["subject"]["value"].split('/')[-1]
+            s = rs["s"]["value"]
+            l = rs["label"]["value"]
+            c = rs["comment"]["value"]
+            print(s, l, c)
+            rs_list.append({'s':s, 'l':l, 'c':c})
+    return rs_list
 
 
 def test():
@@ -145,6 +177,8 @@ if __name__ == '__main__':
     # 2. Moon - Moon all list
     # test()
 
-    # 3. localhost sparql endpoint
-    aURI = ''
-    _class_prop_fetch(aURI)
+    # 3. localhost sparql endpoint when sub query
+    # _class_prop_fetch()
+
+    # 4. local when one query
+    _class_label_comment_fetch()
